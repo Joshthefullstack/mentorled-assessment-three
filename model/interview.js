@@ -1,5 +1,5 @@
 import pool from '../config/dbConfig';
-const { INTERVIEW } = require("../utils/constants.js").TABLES;
+const { INTERVIEW, USER } = require("../utils/constants.js").TABLES;
 
 
 class InterviewModel {
@@ -9,11 +9,17 @@ class InterviewModel {
     }
 
     async create(interview) {
-        let { title, description, questions } = interview;
+        let { title, description, questions, user_id } = interview;
+        if(user_id < 1) throw new Error("Invalid user, interview must be done by a user");
+        const user = await this.pool.query(`SELECT * FROM ${USER} WHERE id = $1`, [user_id]);
+        if(user.rows.length === 0)
+        {
+            throw new Error("User doesn't exist");
+        }
         try {
             const result = await this.pool.query(
-                `INSERT INTO ${INTERVIEW} (title, description, questions) VALUES ($1, $2, $3) RETURNING *`,
-                [title, description, questions]
+                `INSERT INTO ${INTERVIEW} (title, description, questions, user_id) VALUES ($1, $2, $3, $4) RETURNING *`,
+                [title, description, questions, user_id]
             );
             return result.rows[0];
         } catch (error) {

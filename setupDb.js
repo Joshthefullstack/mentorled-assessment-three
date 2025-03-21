@@ -11,8 +11,25 @@ const createTables = async () => {
         title VARCHAR(255) NOT NULL,
         description TEXT NOT NULL,
         questions TEXT[] NOT NULL,
+        user_id INT REFERENCES ${TABLES.USER}(user_id) ON DELETE CASCADE
       )`);
     console.log("Interview table created successfully");
+
+    await pool.query(`CREATE TABLE IF NOT EXISTS ${TABLES.INTERVIEW_SCORING}(
+      interview_score_id SERIAL PRIMARY KEY,
+      interview_id INT REFERENCES ${TABLES.INTERVIEW}(id) ON DELETE CASCADE,
+      score INT NOT NULL,
+      comments TEXT NOT NULL,
+      user_id INT REFERENCES ${TABLES.USER}(user_id) ON DELETE CASCADE
+    )`);
+  console.log("Interview Score table created successfully");
+
+  await pool.query(`CREATE TABLE IF NOT EXISTS ${TABLES.USER}(
+    user_id SERIAL PRIMARY KEY,
+    username TEXT NOT NULL,
+    password VARCHAR(255) NOT NULL,
+  )`);
+console.log("User table created successfully");
   
   
       console.log("Tables created successfully");
@@ -26,6 +43,10 @@ const createTables = async () => {
     try {
       await pool.query(`DROP TABLE IF EXISTS ${TABLES.INTERVIEW}`);
       console.log("Interview schedule table dropped successfully");
+      await pool.query(`DROP TABLE IF EXISTS ${TABLES.INTERVIEW_SCORING}`);
+      console.log("Interview scoring table dropped successfully");
+      await pool.query(`DROP TABLE IF EXISTS ${TABLES.USER}`);
+      console.log("User table dropped successfully");
     } catch (error) {
       console.log(error);
     }

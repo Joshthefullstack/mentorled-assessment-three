@@ -1,16 +1,18 @@
 Interview Session REST API
 
-This is a simple REST API for managing interview sessions with paginations using Node.js, Express.js, and PostgreSQL.
+This is a simple REST API for managing interview sessions, scores and comments, and creating the users of the application (the interviewer) with paginations using Node.js, Express.js, and PostgreSQL.
 
 Features
 
 Create, Update, Get and Delete an interview session with title, description, and questions.
 
+Create, Update, Get interview scores and comments
+
 Stores data in a PostgreSQL database.
 
-Gets interviews with pagination
+Gets specific interview and interview score by their id
 
-Gets specific interview by their id
+User creation and login
 
 
 Installation
@@ -58,12 +60,34 @@ PUT /api/interviews/:id
 DELETE /api/interviews/:id
 GET /api/interviews/:id
 
+POST /api/interviewScore/createInterviewScore
+GET /api/interviewScore
+PUT /api/interviewScore/:id
+GET /api/interviewScore/:id
+GET /api/interviews/getInterviewScore
+
+POST /api/user/createUser
+POST /api/user/login
+
+
 Request Body:
 
 {
   "title": "Frontend Developer Interview",
   "description": "An interview for a frontend developer role",
   "questions": ["What is React?", "Explain useState hook"]
+}
+
+{
+  "interview_id": "1 (referencing interview table)",
+  "score": 60,
+  "comments": "Technical, and straightforward, always ready to tackle problems.",
+  "user_id": "1 (referencing user table)"
+}
+
+{
+  "username": "jibiam",
+  "password": "Pasxw0rd"
 }
 
 Response:
@@ -76,14 +100,17 @@ Response:
 }
 
 {
-  "data": [
-    { "id": 1, "title": "Frontend Developer Interview", "description": "An interview for a frontend developer role", "questions": ["What is React?", "Explain useState hook"]}
-    currentPage: 1,
-    totalPages: 4
-  ]
-  
-  
-  
+  "interview_score_id": 1,
+  "interview_id": 1,
+  "score": 60,
+  "comments": "Technical, and straightforward, always ready to tackle problems.",
+  "user_id": "1"
+}
+
+{
+  "user_id": 1,
+  "username": "jibiam",
+  "password": "Pasxw0rd"
 }
 
 Dependencies
@@ -97,3 +124,5 @@ express
 dotenv
 
 cors
+
+bcrypt
